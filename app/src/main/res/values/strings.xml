@@ -3,4 +3,10 @@
     <string name="get_weather">get weather forecast</string>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="wallpaper_for_the_app">Wallpaper for the app</string>
+    <string name="weather_icon">weather icon</string>
+    <string name="choose_location">choose location</string>
+    <string name="refresh_the_page">refresh the page</string>
+    <string name="hours">hours</string>
+    <string name="days">days</string>
 </resources>
