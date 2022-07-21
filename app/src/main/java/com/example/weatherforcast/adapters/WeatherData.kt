@@ -1,12 +1,12 @@
-package com.example.weatherforcast
+package com.example.weatherforcast.adapters
 
-data class DayItem(
+data class WeatherData(
     val city: String,
     val time: String,
-    val condition: String,
+    val weatherDescription: String,
     val imageURL: String,
     val currentTemp: String,
     val minTemp: String,
     val maxTemp: String,
-    val hours: String,
+    val chanceOfRain: String,
 )

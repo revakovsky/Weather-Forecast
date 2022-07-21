@@ -9,4 +9,6 @@
     <string name="refresh_the_page">refresh the page</string>
     <string name="hours">hours</string>
     <string name="days">days</string>
+    <string name="drop_icon">drop icon</string>
+    <string name="list_is_empty">This list is empty</string>
 </resources>

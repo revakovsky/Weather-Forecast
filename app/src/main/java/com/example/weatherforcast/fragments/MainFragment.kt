@@ -8,8 +8,10 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
+import com.example.weatherforcast.R
 import com.example.weatherforcast.adapters.MyViewPagerAdapter
 import com.example.weatherforcast.databinding.FragmentMainBinding
 import com.google.android.material.tabs.TabLayoutMediator
@@ -21,6 +23,11 @@ class MainFragment : Fragment() {
 
     private val listOfFragments = listOf(HoursFragment.newInstance(), DaysFragment.newInstance())
     private val listOfTabsNames = listOf("hours", "days")
+
+    private val tabIcons = listOf(
+        R.drawable.ic_baseline_access_time,
+        R.drawable.ic_baseline_today
+    )
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -39,8 +46,10 @@ class MainFragment : Fragment() {
     fun initTabs() = with(binding) {
         val adapterViewPager = MyViewPagerAdapter(activity as FragmentActivity, listOfFragments)
         viewPager.adapter = adapterViewPager
-        TabLayoutMediator(tabs, viewPager) {
-            tab, position -> tab.text = listOfTabsNames[position].toString()
+        TabLayoutMediator(tabs, viewPager) { tab, position ->
+            //tab.text = listOfTabsNames[position]
+            tab.setIcon(tabIcons[position])
+
         }.attach()
     }
 
