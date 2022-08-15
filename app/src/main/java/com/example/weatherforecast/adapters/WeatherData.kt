@@ -1,4 +1,4 @@
-package com.example.weatherforcast.adapters
+package com.example.weatherforecast.adapters
 
 data class WeatherData(
     val city: String,
@@ -8,5 +8,6 @@ data class WeatherData(
     val currentTemp: String,
     val minTemp: String,
     val maxTemp: String,
+    val feelingTemp: String,
     val chanceOfRain: String,
 )

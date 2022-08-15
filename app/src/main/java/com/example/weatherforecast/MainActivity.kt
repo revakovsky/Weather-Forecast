@@ -1,14 +1,9 @@
-package com.example.weatherforcast
+package com.example.weatherforecast
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.util.Log
-import com.android.volley.Request
-import com.android.volley.toolbox.StringRequest
-import com.android.volley.toolbox.Volley
-import com.example.weatherforcast.databinding.ActivityMainBinding
-import com.example.weatherforcast.fragments.MainFragment
-import org.json.JSONObject
+import com.example.weatherforecast.databinding.ActivityMainBinding
+import com.example.weatherforecast.fragments.MainFragment
 
 class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding

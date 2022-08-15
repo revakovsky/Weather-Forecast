@@ -1,4 +1,4 @@
-package com.example.weatherforcast.adapters
+package com.example.weatherforecast.adapters
 
 import android.view.LayoutInflater
 import android.view.View
@@ -6,8 +6,8 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import com.example.weatherforcast.R
-import com.example.weatherforcast.databinding.ListItemBinding
+import com.example.weatherforecast.R
+import com.example.weatherforecast.databinding.ListItemBinding
 
 class WeatherAdapter : ListAdapter<WeatherData, WeatherAdapter.weatherViewHolder>(Comparator()) {
 
@@ -17,7 +17,7 @@ class WeatherAdapter : ListAdapter<WeatherData, WeatherAdapter.weatherViewHolder
         fun bind (item : WeatherData) = with(binding) {
             dateInfo.text = item.time
             weatherDescription.text = item.weatherDescription
-            tempToDate.text = item.currentTemp
+            tempValue.text = item.currentTemp
             chanceOfRainValue.text = item.chanceOfRain
         }
     }
