@@ -97,7 +97,7 @@ class MainFragment : Fragment() {
         val daysArrayFromJSONResult = jsonObjects.getJSONObject("forecast").getJSONArray("forecastday")
         val city = jsonObjects.getJSONObject("location").getString("name")
 
-        for (i in 0..daysArrayFromJSONResult.length()) {
+        for (i in 0 until daysArrayFromJSONResult.length()) {
             val day = daysArrayFromJSONResult[i] as JSONObject
             val forecastPerOneDay = WeatherData(
                 city,
@@ -127,7 +127,7 @@ class MainFragment : Fragment() {
             jsonObjects.getJSONObject("current").getString("feelslike_c"),
             currentDayForecast.chanceOfRain,
         )
-        Log.d("testLogs", "Item info: ${currentWeatherData.city}, ${currentWeatherData.currentTemp}, ${currentWeatherData.weatherDescription}")
+        Log.d("testLogs", "Item info: ${currentWeatherData.city}, ${currentWeatherData.currentTemp}, ${currentWeatherData.weatherDescription}, ${currentWeatherData.chanceOfRain}")
     }
 
     private fun permissionListener() {
