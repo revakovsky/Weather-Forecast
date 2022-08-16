@@ -22,6 +22,8 @@ import com.example.weatherforecast.databinding.FragmentMainBinding
 import com.google.android.material.tabs.TabLayoutMediator
 import com.squareup.picasso.Picasso
 import org.json.JSONObject
+import java.time.LocalDate
+import java.time.format.DateTimeFormatter
 
 const val API_KEY = "864b68ca42224665a99104528220807"
 
@@ -136,7 +138,7 @@ class MainFragment : Fragment() {
 
     private fun updateCurrentWeatherView() = with(binding) {
         viewModel.liveDataCurrent.observe(viewLifecycleOwner) {
-            cardMainDate.text = it.date
+            cardMainDate.text = convertDate(it.date)
             cardMainCurrentTemperature.text = "${it.currentTemp}°C"
             cardMainCity.text = it.city
             cardMainDescription.text = it.weatherDescription
@@ -145,6 +147,17 @@ class MainFragment : Fragment() {
             cardMainFeelingTempValue.text = "${it.feelingTemp}°"
             Picasso.get().load("https:" + it.imageURL).into(cardMainWeatherIcon)
         }
+    }
+
+    private fun convertDate(date: String) : String {
+        val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")
+
+        val localDateTime = LocalDate.parse(date, formatter)
+        val month = localDateTime.month.toString().lowercase().replaceFirstChar { it.uppercase() }
+        val day = localDateTime.dayOfMonth
+        val dayName = localDateTime.dayOfWeek.toString().lowercase().replaceFirstChar { it.uppercase() }
+
+        return "$dayName, $day of $month"
     }
 
     private fun permissionListener() {
