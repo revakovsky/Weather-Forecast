@@ -2,7 +2,7 @@ package com.example.weatherforecast.adapters
 
 data class WeatherData(
     val city: String,
-    val time: String,
+    val date: String,
     val weatherDescription: String,
     val imageURL: String,
     val currentTemp: String,

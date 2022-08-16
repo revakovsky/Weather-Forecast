@@ -26,7 +26,7 @@
         android:layout_height="wrap_content"
         android:layout_margin="@dimen/size_5dp"
         app:cardCornerRadius="@dimen/size_5dp"
-        android:elevation="@dimen/size_0dp"
+        android:elevation="@dimen/size_5dp"
         android:backgroundTint="@color/background_dark"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -57,12 +57,12 @@
                 android:src="@drawable/weather_icon"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.0"
                 app:layout_constraintStart_toEndOf="@id/barrier"
-                app:layout_constraintTop_toBottomOf="@+id/card_main_date"
-                />
+                app:layout_constraintTop_toBottomOf="@+id/card_main_date" />
 
             <TextView
-                android:id="@+id/card_main_temperature"
+                android:id="@+id/card_main_current_temperature"
                 style="@style/TextViewPrimary"
                 android:layout_marginTop="@dimen/size_8dp"
                 android:text="32°C"
@@ -76,8 +76,8 @@
                 style="@style/TextViewPrimary.Font_28sp"
                 android:layout_marginTop="@dimen/size_8dp"
                 android:text="Kharkiv"
-                app:layout_constraintStart_toStartOf="@+id/card_main_temperature"
-                app:layout_constraintTop_toBottomOf="@+id/card_main_temperature" />
+                app:layout_constraintStart_toStartOf="@+id/card_main_current_temperature"
+                app:layout_constraintTop_toBottomOf="@+id/card_main_current_temperature" />
 
             <TextView
                 android:id="@+id/card_main_description"
@@ -88,7 +88,7 @@
                 app:layout_constraintTop_toBottomOf="@+id/card_main_city" />
 
             <TextView
-                android:id="@+id/card_main_max_temp"
+                android:id="@+id/card_main_min_temp"
                 style="@style/TextViewPrimary"
                 android:text="35°"
                 app:layout_constraintBottom_toBottomOf="@+id/card_main_weather_icon"
@@ -99,34 +99,34 @@
                 style="@style/TextViewPrimary.ThinPrimary.Font_20sp"
                 android:text="/"
                 android:layout_marginStart="@dimen/size_3dp"
-                app:layout_constraintBottom_toBottomOf="@+id/card_main_max_temp"
-                app:layout_constraintStart_toEndOf="@+id/card_main_max_temp"
-                app:layout_constraintTop_toTopOf="@+id/card_main_max_temp" />
+                app:layout_constraintBottom_toBottomOf="@+id/card_main_min_temp"
+                app:layout_constraintStart_toEndOf="@+id/card_main_min_temp"
+                app:layout_constraintTop_toTopOf="@+id/card_main_min_temp" />
 
             <TextView
-                android:id="@+id/card_main_min_temp"
+                android:id="@+id/card_main_max_temp"
                 style="@style/TextViewPrimary"
                 android:layout_marginStart="@dimen/size_3dp"
                 android:text="26°"
-                app:layout_constraintBottom_toBottomOf="@+id/card_main_max_temp"
+                app:layout_constraintBottom_toBottomOf="@+id/card_main_min_temp"
                 app:layout_constraintStart_toEndOf="@+id/card_main_divider"
-                app:layout_constraintTop_toTopOf="@+id/card_main_max_temp" />
+                app:layout_constraintTop_toTopOf="@+id/card_main_min_temp" />
 
             <androidx.constraintlayout.widget.Barrier
                 android:layout_width="@dimen/size_0dp"
                 android:layout_height="@dimen/size_0dp"
                 android:id="@+id/barrier"
                 app:barrierDirection="end"
-                app:constraint_referenced_ids="card_main_temperature, card_main_city, card_main_description, refresh"
+                app:constraint_referenced_ids="card_main_current_temperature, card_main_city, card_main_description, refresh"
                 />
 
             <TextView
-                android:id="@+id/card_main_feeling_temp"
+                android:id="@+id/card_main_feeling_text"
                 style="@style/TextViewPrimary.ThinPrimary"
                 android:text="feels like"
                 android:layout_marginBottom="@dimen/size_16dp"
                 app:layout_constraintStart_toStartOf="@+id/card_main_city"
-                app:layout_constraintTop_toBottomOf="@+id/card_main_max_temp"
+                app:layout_constraintTop_toBottomOf="@+id/card_main_min_temp"
                 app:layout_constraintBottom_toBottomOf="@id/container_in_main_card"
                 />
 
@@ -135,9 +135,9 @@
                 style="@style/TextViewPrimary"
                 android:text="10°"
                 android:layout_marginStart="@dimen/size_3dp"
-                app:layout_constraintBottom_toBottomOf="@+id/card_main_feeling_temp"
-                app:layout_constraintStart_toEndOf="@+id/card_main_feeling_temp"
-                app:layout_constraintTop_toTopOf="@+id/card_main_feeling_temp" />
+                app:layout_constraintBottom_toBottomOf="@+id/card_main_feeling_text"
+                app:layout_constraintStart_toEndOf="@+id/card_main_feeling_text"
+                app:layout_constraintTop_toTopOf="@+id/card_main_feeling_text" />
 
             <ImageButton
                 android:id="@+id/find_location"

@@ -14,11 +14,13 @@ import androidx.fragment.app.FragmentActivity
 import com.android.volley.Request
 import com.android.volley.toolbox.StringRequest
 import com.android.volley.toolbox.Volley
+import com.example.weatherforecast.MainViewModel
 import com.example.weatherforecast.R
 import com.example.weatherforecast.adapters.MyViewPagerAdapter
 import com.example.weatherforecast.adapters.WeatherData
 import com.example.weatherforecast.databinding.FragmentMainBinding
 import com.google.android.material.tabs.TabLayoutMediator
+import com.squareup.picasso.Picasso
 import org.json.JSONObject
 
 const val API_KEY = "864b68ca42224665a99104528220807"
@@ -29,12 +31,13 @@ class MainFragment : Fragment() {
     private lateinit var permissionLauncher: ActivityResultLauncher<String>
 
     private val listOfFragments = listOf(HoursFragment.newInstance(), DaysFragment.newInstance())
-    private val listOfTabsNames = listOf("hours", "days")
 
     private val tabIcons = listOf(
         R.drawable.ic_baseline_access_time,
         R.drawable.ic_baseline_today
     )
+
+    private val viewModel = MainViewModel()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -48,10 +51,11 @@ class MainFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         checkPermission()
         initTabs()
-        requestWeatherData("London")    //change city later to input field
+        updateCurrentWeatherView()
+        requestWeatherData("Kiev")    //change city later to input field
     }
 
-    fun initTabs() = with(binding) {
+    private fun initTabs() = with(binding) {
         val adapterViewPager = MyViewPagerAdapter(activity as FragmentActivity, listOfFragments)
         viewPager.adapter = adapterViewPager
         TabLayoutMediator(tabs, viewPager) { tab, position ->
@@ -92,7 +96,7 @@ class MainFragment : Fragment() {
         getCurrentWeatherData(jsonObjects, daysForecastList[0])
     }
 
-    fun getDaysForecastList(jsonObjects: JSONObject) : List<WeatherData> {
+    private fun getDaysForecastList(jsonObjects: JSONObject) : List<WeatherData> {
         val daysForecastList = arrayListOf<WeatherData>()
         val daysArrayFromJSONResult = jsonObjects.getJSONObject("forecast").getJSONArray("forecastday")
         val city = jsonObjects.getJSONObject("location").getString("name")
@@ -127,7 +131,20 @@ class MainFragment : Fragment() {
             jsonObjects.getJSONObject("current").getString("feelslike_c"),
             currentDayForecast.chanceOfRain,
         )
-        Log.d("testLogs", "Item info: ${currentWeatherData.city}, ${currentWeatherData.currentTemp}, ${currentWeatherData.weatherDescription}, ${currentWeatherData.chanceOfRain}")
+        viewModel.liveDataCurrent.value = currentWeatherData
+    }
+
+    private fun updateCurrentWeatherView() = with(binding) {
+        viewModel.liveDataCurrent.observe(viewLifecycleOwner) {
+            cardMainDate.text = it.date
+            cardMainCurrentTemperature.text = "${it.currentTemp}°C"
+            cardMainCity.text = it.city
+            cardMainDescription.text = it.weatherDescription
+            cardMainMinTemp.text = "${it.minTemp}°"
+            cardMainMaxTemp.text = "${it.maxTemp}°"
+            cardMainFeelingTempValue.text = "${it.feelingTemp}°"
+            Picasso.get().load("https:" + it.imageURL).into(cardMainWeatherIcon)
+        }
     }
 
     private fun permissionListener() {

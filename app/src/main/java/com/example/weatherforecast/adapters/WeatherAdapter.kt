@@ -15,7 +15,7 @@ class WeatherAdapter : ListAdapter<WeatherData, WeatherAdapter.weatherViewHolder
         val binding = ListItemBinding.bind(view)
 
         fun bind (item : WeatherData) = with(binding) {
-            dateInfo.text = item.time
+            dateInfo.text = item.date
             weatherDescription.text = item.weatherDescription
             tempValue.text = item.currentTemp
             chanceOfRainValue.text = item.chanceOfRain
