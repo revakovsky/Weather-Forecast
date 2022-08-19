@@ -83,14 +83,17 @@ class MainFragment : Fragment() {
 
     private fun parseJSONData(result: String) {
         val jsonObjects = JSONObject(result)
-        val dailyForecastList: List<WeatherData> = forecastListCreator.getDailyForecastList(jsonObjects)
-        val currentDayForecast = dailyForecastList[0]
+        val dailyWeatherDataList: List<WeatherData> = forecastListCreator.getDailyWeatherDataList(jsonObjects)
+
+        val currentDayForecast = dailyWeatherDataList[0]
+        val tomorrowDayForecast = dailyWeatherDataList[1]
         val forecastDataAtPresent = forecastListCreator.getForecastDataAtPresent(jsonObjects, currentDayForecast)
-        viewModel.refreshHourlyForecastLiveData(forecastDataAtPresent)
+
+        viewModel.refreshForecastLiveData(forecastDataAtPresent, tomorrowDayForecast)
     }
 
     private fun showForecastDataAtPresent() = with(binding) {
-        viewModel.hourlyForecastLiveData.observe(viewLifecycleOwner) {
+        viewModel.currentDayForecastLiveData.observe(viewLifecycleOwner) {
             cardMainDate.text = dateTimeConverter.convertDate(it.date)
             cardMainCurrentTemperature.text = "${it.currentTemp}°C"
             cardMainCity.text = it.city

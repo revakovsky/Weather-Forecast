@@ -32,7 +32,12 @@ class HoursFragment : Fragment() {
         initRecView()
 
         viewModel.hourlyForecastLiveData.observe(viewLifecycleOwner) {
-            val hourlyForecastList: List<WeatherData> = forecastListCreator.getHourlyForecastList(it)
+            val forecastDataAtPresent = it[0]
+            val tomorrowDayForecast = it[1]
+
+            val hourlyForecastList: List<WeatherData> =
+                forecastListCreator.getHourlyForecastList(forecastDataAtPresent, tomorrowDayForecast)
+
             adapter.submitList(hourlyForecastList)
         }
     }

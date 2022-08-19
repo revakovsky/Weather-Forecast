@@ -25,6 +25,10 @@ class DateTimeConverter {
         return LocalTime.of(hour, minute).toString()
     }
 
+    fun getCurrentHour(): Int {
+        return LocalTime.now().hour
+    }
+
     private fun parseDateTime(dateTime : String) : LocalDateTime {
         val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")
         return LocalDateTime.parse(dateTime, formatter)

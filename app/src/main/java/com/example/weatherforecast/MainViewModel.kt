@@ -6,9 +6,12 @@ import com.example.weatherforecast.adapters.WeatherData
 
 class MainViewModel : ViewModel() {
     val currentDayForecastLiveData = MutableLiveData<WeatherData> ()
-    val hourlyForecastLiveData = MutableLiveData<WeatherData>()
+    val hourlyForecastLiveData = MutableLiveData<ArrayList<WeatherData>>()
 
-    fun refreshHourlyForecastLiveData(currentDayWeatherData: WeatherData) {
-        hourlyForecastLiveData.value = currentDayWeatherData
+    fun refreshForecastLiveData(forecastDataAtPresent: WeatherData,
+                                tomorrowDayForecast: WeatherData) {
+
+        currentDayForecastLiveData.value = forecastDataAtPresent
+        hourlyForecastLiveData.value = arrayListOf(forecastDataAtPresent, tomorrowDayForecast)
     }
 }

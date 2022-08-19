@@ -57,7 +57,6 @@
                 android:src="@drawable/weather_icon"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="0.0"
                 app:layout_constraintStart_toEndOf="@id/barrier"
                 app:layout_constraintTop_toBottomOf="@+id/card_main_date" />
 
@@ -82,10 +81,17 @@
             <TextView
                 android:id="@+id/card_main_description"
                 style="@style/TextViewPrimary.ThinPrimary.Font_20sp"
+                android:layout_width="@dimen/size_0dp"
+                android:layout_height="@dimen/size_0dp"
                 android:layout_marginTop="@dimen/size_3dp"
+                android:layout_marginEnd="@dimen/size_8dp"
                 android:text="partly cloudy"
+                app:layout_constraintBottom_toTopOf="@+id/card_main_min_temp"
+                app:layout_constraintEnd_toStartOf="@+id/card_main_weather_icon"
+                app:layout_constraintHorizontal_bias="0.0"
                 app:layout_constraintStart_toStartOf="@+id/card_main_city"
-                app:layout_constraintTop_toBottomOf="@+id/card_main_city" />
+                app:layout_constraintTop_toBottomOf="@+id/card_main_city"
+                app:layout_constraintVertical_bias="0.0" />
 
             <TextView
                 android:id="@+id/card_main_min_temp"
@@ -117,7 +123,7 @@
                 android:layout_height="@dimen/size_0dp"
                 android:id="@+id/barrier"
                 app:barrierDirection="end"
-                app:constraint_referenced_ids="card_main_current_temperature, card_main_city, card_main_description, refresh"
+                app:constraint_referenced_ids="card_main_current_temperature, card_main_city, refresh"
                 />
 
             <TextView

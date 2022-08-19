@@ -5,56 +5,65 @@ import org.json.JSONObject
 
 class ForecastListCreator {
     private val timeConverter = DateTimeConverter()
+    private val hourlyForecastList = ArrayList<WeatherData>()
 
-    fun getDailyForecastList(jsonObjects: JSONObject): List<WeatherData> {
-        val dailyForecastList = arrayListOf<WeatherData>()
-        val dailyForecastListFromJSONResponse = jsonObjects.getJSONObject("forecast").getJSONArray("forecastday")
+    fun getDailyWeatherDataList(jsonObjects: JSONObject): List<WeatherData> {
+        val dailyWeatherDataList = arrayListOf<WeatherData>()
+        val dailyWeatherDataListFromJSONResponse = jsonObjects.getJSONObject("forecast").getJSONArray("forecastday")
         val cityName = jsonObjects.getJSONObject("location").getString("name")
 
-        for (i in 0 until dailyForecastListFromJSONResponse.length()) {
-            val oneDayForecastData = dailyForecastListFromJSONResponse[i] as JSONObject
+        for (i in 0 until dailyWeatherDataListFromJSONResponse.length()) {
+            val oneDayWeatherData = dailyWeatherDataListFromJSONResponse[i] as JSONObject
             val forecastPerOneDay = WeatherData(
                 cityName,
-                oneDayForecastData.getString("date"),
-                oneDayForecastData.getJSONObject("day").getJSONObject("condition").getString("text"),
-                oneDayForecastData.getJSONObject("day").getJSONObject("condition").getString("icon"),
+                oneDayWeatherData.getString("date"),
+                oneDayWeatherData.getJSONObject("day").getJSONObject("condition").getString("text"),
+                oneDayWeatherData.getJSONObject("day").getJSONObject("condition").getString("icon"),
                 "",
-                oneDayForecastData.getJSONObject("day").getString("mintemp_c"),
-                oneDayForecastData.getJSONObject("day").getString("maxtemp_c"),
+                oneDayWeatherData.getJSONObject("day").getString("mintemp_c"),
+                oneDayWeatherData.getJSONObject("day").getString("maxtemp_c"),
                 "",
-                oneDayForecastData.getJSONObject("day").getString("daily_chance_of_rain"),
-                oneDayForecastData.getJSONArray("hour").toString()
+                oneDayWeatherData.getJSONObject("day").getString("daily_chance_of_rain"),
+                oneDayWeatherData.getJSONArray("hour").toString()
             )
-            dailyForecastList.add(forecastPerOneDay)
+            dailyWeatherDataList.add(forecastPerOneDay)
         }
-        return dailyForecastList
+        return dailyWeatherDataList
     }
 
 
-    fun getHourlyForecastList(currentDayWeatherData: WeatherData
-                              //, tomorrowDayWeatherData: WeatherData
-                                                                    ): List<WeatherData> {
-        val hourlyForecastList = ArrayList<WeatherData>()
+    fun getHourlyForecastList(forecastDataAtPresent: WeatherData,
+                              tomorrowDayForecast: WeatherData): List<WeatherData> {
 
-        val hourlyForecastForTodayFromJSONResponse = JSONArray(currentDayWeatherData.hourlyForecast)
-        //val hourlyForecastForTomorrowFromJSONResponse = JSONArray(tomorrowDayWeatherData.hourlyForecast)
+        val hourlyDataFromJSONResponseForToday = JSONArray(forecastDataAtPresent.hourlyForecast)
+        val hourlyDataFromJSONResponseForTomorrow = JSONArray(tomorrowDayForecast.hourlyForecast)
 
-        for (i in 0 until hourlyForecastForTodayFromJSONResponse.length()) {
-            val oneHourDataForToday = hourlyForecastForTodayFromJSONResponse[i] as JSONObject
-            //val oneHourDataForTomorrow = hourlyForecastForTodayFromJSONResponse[i] as JSONObject
-            val forecastPerOneHour = WeatherData(
-                "",
-                timeConverter.convertTime(oneHourDataForToday.getString("time")),
-                oneHourDataForToday.getJSONObject("condition").getString("text"),
-                oneHourDataForToday.getJSONObject("condition").getString("icon"),
-                oneHourDataForToday.getString("temp_c"),
-                "", "", "",
-                oneHourDataForToday.getString("chance_of_rain"),
-                ""
-            )
-            hourlyForecastList.add(forecastPerOneHour)
+        val currentHour = timeConverter.getCurrentHour() + 1
+
+        for (i in currentHour until hourlyDataFromJSONResponseForToday.length()) {
+            fillInHourlyForecastList(hourlyDataFromJSONResponseForToday, i)
+        }
+
+        for (i in 0 until currentHour) {
+            fillInHourlyForecastList(hourlyDataFromJSONResponseForTomorrow, i)
         }
         return hourlyForecastList
+    }
+
+    private fun fillInHourlyForecastList(hourlyDataFromJSONResponse: JSONArray, i : Int)  {
+        val oneHourWeatherData = hourlyDataFromJSONResponse[i] as JSONObject
+
+        val forecastPerOneHour = WeatherData(
+            "",
+            timeConverter.convertTime(oneHourWeatherData.getString("time")),
+            oneHourWeatherData.getJSONObject("condition").getString("text"),
+            oneHourWeatherData.getJSONObject("condition").getString("icon"),
+            convertTemperature(oneHourWeatherData.getString("temp_c")),
+            "", "", "",
+            oneHourWeatherData.getString("chance_of_rain"),
+            ""
+        )
+        hourlyForecastList.add(forecastPerOneHour)
     }
 
     fun getForecastDataAtPresent(jsonObjects: JSONObject, currentDayForecast: WeatherData) : WeatherData {
@@ -70,6 +79,11 @@ class ForecastListCreator {
             currentDayForecast.chanceOfRain,
             currentDayForecast.hourlyForecast
         )
+    }
+
+    private fun convertTemperature(temp : String) : String {
+        val tempToDouble = temp.toDouble()
+        return String.format("%.1f", tempToDouble)
     }
 
 }
