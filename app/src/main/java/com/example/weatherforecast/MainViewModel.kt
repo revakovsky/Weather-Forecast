@@ -5,6 +5,10 @@ import androidx.lifecycle.ViewModel
 import com.example.weatherforecast.adapters.WeatherData
 
 class MainViewModel : ViewModel() {
-    val liveDataCurrent = MutableLiveData<WeatherData>()
-    val liveDataList = MutableLiveData<WeatherData>()
+    val currentDayForecastLiveData = MutableLiveData<WeatherData> ()
+    val hourlyForecastLiveData = MutableLiveData<WeatherData>()
+
+    fun refreshHourlyForecastLiveData(currentDayWeatherData: WeatherData) {
+        hourlyForecastLiveData.value = currentDayWeatherData
+    }
 }

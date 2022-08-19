@@ -10,4 +10,5 @@ data class WeatherData(
     val maxTemp: String,
     val feelingTemp: String,
     val chanceOfRain: String,
+    val hourlyForecast: String
 )

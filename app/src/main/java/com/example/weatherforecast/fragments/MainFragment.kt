@@ -11,9 +11,13 @@ import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
+import androidx.fragment.app.activityViewModels
 import com.android.volley.Request
 import com.android.volley.toolbox.StringRequest
 import com.android.volley.toolbox.Volley
+import com.example.weatherforecast.Constants
+import com.example.weatherforecast.adapters.DateTimeConverter
+import com.example.weatherforecast.adapters.ForecastListCreator
 import com.example.weatherforecast.MainViewModel
 import com.example.weatherforecast.R
 import com.example.weatherforecast.adapters.MyViewPagerAdapter
@@ -22,15 +26,14 @@ import com.example.weatherforecast.databinding.FragmentMainBinding
 import com.google.android.material.tabs.TabLayoutMediator
 import com.squareup.picasso.Picasso
 import org.json.JSONObject
-import java.time.LocalDate
-import java.time.format.DateTimeFormatter
-
-const val API_KEY = "864b68ca42224665a99104528220807"
 
 class MainFragment : Fragment() {
-    private lateinit var binding: FragmentMainBinding
 
+    private lateinit var binding: FragmentMainBinding
     private lateinit var permissionLauncher: ActivityResultLauncher<String>
+    private val dateTimeConverter = DateTimeConverter()
+    private val forecastListCreator = ForecastListCreator()
+    private val viewModel : MainViewModel by activityViewModels()
 
     private val listOfFragments = listOf(HoursFragment.newInstance(), DaysFragment.newInstance())
 
@@ -38,8 +41,6 @@ class MainFragment : Fragment() {
         R.drawable.ic_baseline_access_time,
         R.drawable.ic_baseline_today
     )
-
-    private val viewModel = MainViewModel()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -53,23 +54,13 @@ class MainFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         checkPermission()
         initTabs()
-        updateCurrentWeatherView()
-        requestWeatherData("Kiev")    //change city later to input field
+        requestForUpdateWeatherData("Kharkiv")    //change city later to input field
+        showForecastDataAtPresent()
     }
 
-    private fun initTabs() = with(binding) {
-        val adapterViewPager = MyViewPagerAdapter(activity as FragmentActivity, listOfFragments)
-        viewPager.adapter = adapterViewPager
-        TabLayoutMediator(tabs, viewPager) { tab, position ->
-            //tab.text = listOfTabsNames[position]
-            tab.setIcon(tabIcons[position])
-
-        }.attach()
-    }
-
-    private fun requestWeatherData(city: String) {
+    private fun requestForUpdateWeatherData(city: String) {
         val url = "https://api.weatherapi.com/v1/forecast.json?key=" +
-                API_KEY +
+                Constants.API_KEY +
                 "&q=" +
                 city +
                 "&days=" +
@@ -80,12 +71,10 @@ class MainFragment : Fragment() {
         val request = StringRequest(
             Request.Method.GET,
             url,
-            {
-                result ->
+            { result ->
                 parseJSONData(result)
             },
-            {
-                error ->
+            { error ->
                 Log.d("testLogs", "error: $error")
             }
         )
@@ -94,51 +83,15 @@ class MainFragment : Fragment() {
 
     private fun parseJSONData(result: String) {
         val jsonObjects = JSONObject(result)
-        val daysForecastList : List<WeatherData> = getDaysForecastList(jsonObjects)
-        getCurrentWeatherData(jsonObjects, daysForecastList[0])
+        val dailyForecastList: List<WeatherData> = forecastListCreator.getDailyForecastList(jsonObjects)
+        val currentDayForecast = dailyForecastList[0]
+        val forecastDataAtPresent = forecastListCreator.getForecastDataAtPresent(jsonObjects, currentDayForecast)
+        viewModel.refreshHourlyForecastLiveData(forecastDataAtPresent)
     }
 
-    private fun getDaysForecastList(jsonObjects: JSONObject) : List<WeatherData> {
-        val daysForecastList = arrayListOf<WeatherData>()
-        val daysArrayFromJSONResult = jsonObjects.getJSONObject("forecast").getJSONArray("forecastday")
-        val city = jsonObjects.getJSONObject("location").getString("name")
-
-        for (i in 0 until daysArrayFromJSONResult.length()) {
-            val day = daysArrayFromJSONResult[i] as JSONObject
-            val forecastPerOneDay = WeatherData(
-                city,
-                day.getString("date"),
-                day.getJSONObject("day").getJSONObject("condition").getString("text"),
-                day.getJSONObject("day").getJSONObject("condition").getString("icon"),
-                "",
-                day.getJSONObject("day").getString("mintemp_c"),
-                day.getJSONObject("day").getString("maxtemp_c"),
-                "",
-                day.getJSONObject("day").getString("daily_chance_of_rain")
-            )
-            daysForecastList.add(forecastPerOneDay)
-        }
-        return daysForecastList
-    }
-
-    private fun getCurrentWeatherData(jsonObjects: JSONObject, currentDayForecast: WeatherData) {
-        val currentWeatherData = WeatherData(
-            jsonObjects.getJSONObject("location").getString("name"),
-            jsonObjects.getJSONObject("current").getString("last_updated"),
-            jsonObjects.getJSONObject("current").getJSONObject("condition").getString("text"),
-            jsonObjects.getJSONObject("current").getJSONObject("condition").getString("icon"),
-            jsonObjects.getJSONObject("current").getString("temp_c"),
-            currentDayForecast.minTemp,
-            currentDayForecast.maxTemp,
-            jsonObjects.getJSONObject("current").getString("feelslike_c"),
-            currentDayForecast.chanceOfRain,
-        )
-        viewModel.liveDataCurrent.value = currentWeatherData
-    }
-
-    private fun updateCurrentWeatherView() = with(binding) {
-        viewModel.liveDataCurrent.observe(viewLifecycleOwner) {
-            cardMainDate.text = convertDate(it.date)
+    private fun showForecastDataAtPresent() = with(binding) {
+        viewModel.hourlyForecastLiveData.observe(viewLifecycleOwner) {
+            cardMainDate.text = dateTimeConverter.convertDate(it.date)
             cardMainCurrentTemperature.text = "${it.currentTemp}°C"
             cardMainCity.text = it.city
             cardMainDescription.text = it.weatherDescription
@@ -149,22 +102,15 @@ class MainFragment : Fragment() {
         }
     }
 
-    private fun convertDate(date: String) : String {
-        val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")
 
-        val localDateTime = LocalDate.parse(date, formatter)
-        val month = localDateTime.month.toString().lowercase().replaceFirstChar { it.uppercase() }
-        val day = localDateTime.dayOfMonth
-        val dayName = localDateTime.dayOfWeek.toString().lowercase().replaceFirstChar { it.uppercase() }
-
-        return "$dayName, $day of $month"
+    private fun initTabs() = with(binding) {
+        val adapterViewPager = MyViewPagerAdapter(activity as FragmentActivity, listOfFragments)
+        viewPager.adapter = adapterViewPager
+        TabLayoutMediator(tabs, viewPager) { tab, position ->
+            tab.setIcon(tabIcons[position])
+        }.attach()
     }
 
-    private fun permissionListener() {
-        permissionLauncher = registerForActivityResult(ActivityResultContracts.RequestPermission()) {
-            Toast.makeText(activity, "Permission is $it", Toast.LENGTH_LONG).show()
-        }
-    }
 
     private fun checkPermission() {
         if (!isPermissionGranted(Manifest.permission.ACCESS_FINE_LOCATION)) {
@@ -172,6 +118,13 @@ class MainFragment : Fragment() {
             permissionLauncher.launch(Manifest.permission.ACCESS_FINE_LOCATION)
 
         }
+    }
+
+    private fun permissionListener() {
+        permissionLauncher =
+            registerForActivityResult(ActivityResultContracts.RequestPermission()) {
+                Toast.makeText(activity, "Permission is $it", Toast.LENGTH_LONG).show()
+            }
     }
 
     companion object {

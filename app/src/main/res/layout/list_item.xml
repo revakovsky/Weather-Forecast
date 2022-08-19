@@ -29,7 +29,9 @@
         <TextView
             android:id="@+id/weather_description"
             style="@style/TextViewPrimary.Color_black"
+            android:layout_width="@dimen/size_0dp"
             android:layout_marginStart="@dimen/size_16dp"
+            android:layout_marginEnd="@dimen/size_16dp"
             android:layout_marginTop="@dimen/size_8dp"
             android:text="Sunny"
             app:layout_constraintEnd_toStartOf="@+id/temp_value"
@@ -85,21 +87,13 @@
         <TextView
             android:id="@+id/temp_value"
             style="@style/TextViewPrimary.Font_20sp"
-            android:layout_marginEnd="@dimen/size_48dp"
+            android:layout_marginEnd="@dimen/size_24dp"
             android:text="23"
             android:textColor="@color/secondary_dark"
             app:layout_constraintBottom_toBottomOf="@+id/temp_image"
             app:layout_constraintEnd_toStartOf="@+id/temp_image"
             app:layout_constraintTop_toTopOf="@+id/temp_image" />
 
-        <TextView
-            android:id="@+id/temp_sign"
-            style="@style/TextViewPrimary.Font_20sp"
-            android:text="°C"
-            android:textColor="@color/secondary_dark"
-            app:layout_constraintBottom_toBottomOf="@+id/temp_value"
-            app:layout_constraintStart_toEndOf="@+id/temp_value"
-            app:layout_constraintTop_toTopOf="@+id/temp_value" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
