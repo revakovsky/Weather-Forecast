@@ -31,15 +31,17 @@ class ForecastListCreator {
     }
 
 
-    fun getHourlyForecastList(currentDayWeatherData: WeatherData, tomorrowDayWeatherData: WeatherData): List<WeatherData> {
+    fun getHourlyForecastList(currentDayWeatherData: WeatherData
+                              //, tomorrowDayWeatherData: WeatherData
+                                                                    ): List<WeatherData> {
         val hourlyForecastList = ArrayList<WeatherData>()
 
         val hourlyForecastForTodayFromJSONResponse = JSONArray(currentDayWeatherData.hourlyForecast)
-        val hourlyForecastForTomorrowFromJSONResponse = JSONArray(tomorrowDayWeatherData.hourlyForecast)
+        //val hourlyForecastForTomorrowFromJSONResponse = JSONArray(tomorrowDayWeatherData.hourlyForecast)
 
         for (i in 0 until hourlyForecastForTodayFromJSONResponse.length()) {
             val oneHourDataForToday = hourlyForecastForTodayFromJSONResponse[i] as JSONObject
-            val oneHourDataForTomorrow = hourlyForecastForTodayFromJSONResponse[i] as JSONObject
+            //val oneHourDataForTomorrow = hourlyForecastForTodayFromJSONResponse[i] as JSONObject
             val forecastPerOneHour = WeatherData(
                 "",
                 timeConverter.convertTime(oneHourDataForToday.getString("time")),
