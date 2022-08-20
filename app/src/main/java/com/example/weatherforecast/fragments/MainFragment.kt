@@ -89,7 +89,8 @@ class MainFragment : Fragment() {
 
         val currentDayForecast = dailyWeatherDataList[0]
         val tomorrowDayForecast = dailyWeatherDataList[1]
-        val forecastDataAtPresent = atPresentForecastListCreator.getForecastDataAtPresent(jsonObjects, currentDayForecast)
+        val forecastDataAtPresent: WeatherData =
+            atPresentForecastListCreator.getForecastDataAtPresent(jsonObjects, currentDayForecast)
 
         viewModel.refreshForecastLiveData(forecastDataAtPresent, tomorrowDayForecast)
     }
