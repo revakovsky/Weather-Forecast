@@ -7,16 +7,16 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.activityViewModels
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.example.weatherforecast.adapters.ForecastListCreator
 import com.example.weatherforecast.MainViewModel
 import com.example.weatherforecast.adapters.WeatherAdapter
 import com.example.weatherforecast.adapters.WeatherData
 import com.example.weatherforecast.databinding.FragmentHoursBinding
+import com.example.weatherforecast.forecastCreators.HourlyForecastListCreator
 
 class HoursFragment : Fragment() {
     private lateinit var binding: FragmentHoursBinding
     private lateinit var adapter: WeatherAdapter
-    private val forecastListCreator = ForecastListCreator()
+    private val hourlyForecastListCreator = HourlyForecastListCreator()
     private val viewModel: MainViewModel by activityViewModels()
 
     override fun onCreateView(
@@ -36,7 +36,7 @@ class HoursFragment : Fragment() {
             val tomorrowDayForecast = it[1]
 
             val hourlyForecastList: List<WeatherData> =
-                forecastListCreator.getHourlyForecastList(forecastDataAtPresent, tomorrowDayForecast)
+                hourlyForecastListCreator.getHourlyForecastList(forecastDataAtPresent, tomorrowDayForecast)
 
             adapter.submitList(hourlyForecastList)
         }

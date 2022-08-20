@@ -17,12 +17,13 @@ import com.android.volley.toolbox.StringRequest
 import com.android.volley.toolbox.Volley
 import com.example.weatherforecast.Constants
 import com.example.weatherforecast.adapters.DateTimeConverter
-import com.example.weatherforecast.adapters.ForecastListCreator
 import com.example.weatherforecast.MainViewModel
 import com.example.weatherforecast.R
+import com.example.weatherforecast.forecastCreators.AtPresentForecastListCreator
 import com.example.weatherforecast.adapters.MyViewPagerAdapter
 import com.example.weatherforecast.adapters.WeatherData
 import com.example.weatherforecast.databinding.FragmentMainBinding
+import com.example.weatherforecast.forecastCreators.DailyForecastListCreator
 import com.google.android.material.tabs.TabLayoutMediator
 import com.squareup.picasso.Picasso
 import org.json.JSONObject
@@ -32,7 +33,8 @@ class MainFragment : Fragment() {
     private lateinit var binding: FragmentMainBinding
     private lateinit var permissionLauncher: ActivityResultLauncher<String>
     private val dateTimeConverter = DateTimeConverter()
-    private val forecastListCreator = ForecastListCreator()
+    private val dailyForecastListCreator = DailyForecastListCreator()
+    private val atPresentForecastListCreator = AtPresentForecastListCreator()
     private val viewModel : MainViewModel by activityViewModels()
 
     private val listOfFragments = listOf(HoursFragment.newInstance(), DaysFragment.newInstance())
@@ -83,11 +85,11 @@ class MainFragment : Fragment() {
 
     private fun parseJSONData(result: String) {
         val jsonObjects = JSONObject(result)
-        val dailyWeatherDataList: List<WeatherData> = forecastListCreator.getDailyWeatherDataList(jsonObjects)
+        val dailyWeatherDataList: List<WeatherData> = dailyForecastListCreator.getDailyWeatherDataList(jsonObjects)
 
         val currentDayForecast = dailyWeatherDataList[0]
         val tomorrowDayForecast = dailyWeatherDataList[1]
-        val forecastDataAtPresent = forecastListCreator.getForecastDataAtPresent(jsonObjects, currentDayForecast)
+        val forecastDataAtPresent = atPresentForecastListCreator.getForecastDataAtPresent(jsonObjects, currentDayForecast)
 
         viewModel.refreshForecastLiveData(forecastDataAtPresent, tomorrowDayForecast)
     }
