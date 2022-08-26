@@ -1,4 +1,4 @@
-package com.example.weatherforecast.fragments
+package com.example.weatherforecast.view.dailyforecast
 
 import android.os.Bundle
 import androidx.fragment.app.Fragment
@@ -7,18 +7,18 @@ import android.view.View
 import android.view.ViewGroup
 import com.example.weatherforecast.R
 
-class DaysFragment : Fragment() {
+class DailyForecastFragment : Fragment() {
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_days, container, false)
+        return inflater.inflate(R.layout.fragment_daily_forecast, container, false)
     }
 
     companion object {
         @JvmStatic
-        fun newInstance() = DaysFragment()
+        fun newInstance() = DailyForecastFragment()
     }
 }

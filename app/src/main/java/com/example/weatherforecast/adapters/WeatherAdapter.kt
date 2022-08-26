@@ -7,13 +7,13 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.example.weatherforecast.R
-import com.example.weatherforecast.databinding.ListItemBinding
+import com.example.weatherforecast.databinding.WeatherForecastItemBinding
 import com.squareup.picasso.Picasso
 
 class WeatherAdapter : ListAdapter<WeatherData, WeatherAdapter.weatherViewHolder>(Comparator()) {
 
     class weatherViewHolder(view : View) : RecyclerView.ViewHolder(view) {
-        private val binding = ListItemBinding.bind(view)
+        private val binding = WeatherForecastItemBinding.bind(view)
 
         fun bind (item : WeatherData) = with(binding) {
             dateInfo.text = item.date
@@ -25,7 +25,7 @@ class WeatherAdapter : ListAdapter<WeatherData, WeatherAdapter.weatherViewHolder
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): weatherViewHolder {
-        val view = LayoutInflater.from(parent.context).inflate(R.layout.list_item, parent, false)
+        val view = LayoutInflater.from(parent.context).inflate(R.layout.weather_forecast_item, parent, false)
         return weatherViewHolder(view)
     }
 

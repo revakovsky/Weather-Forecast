@@ -11,4 +11,8 @@
     <string name="days">days</string>
     <string name="drop_icon">drop icon</string>
     <string name="list_is_empty">This list is empty</string>
+
+    <string name="allow_the_app_to_use_geolocation">Please, allow the app access to geolocation</string>
+    <string name="permission_is_granted">Permission is granted</string>
+    <string name="permission_denied">Permission denied</string>
 </resources>

@@ -1,6 +1,7 @@
-package com.example.weatherforecast.fragments
+package com.example.weatherforecast.view.currentforecast
 
 import android.Manifest
+import android.content.pm.PackageManager
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -9,35 +10,45 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
 import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.LifecycleOwner
+import androidx.lifecycle.ViewModelProvider
 import com.android.volley.Request
 import com.android.volley.toolbox.StringRequest
 import com.android.volley.toolbox.Volley
 import com.example.weatherforecast.Constants
-import com.example.weatherforecast.adapters.DateTimeConverter
 import com.example.weatherforecast.MainViewModel
+import com.example.weatherforecast.adapters.DateTimeConverter
 import com.example.weatherforecast.R
 import com.example.weatherforecast.forecastCreators.AtPresentForecastListCreator
 import com.example.weatherforecast.adapters.MyViewPagerAdapter
 import com.example.weatherforecast.adapters.WeatherData
-import com.example.weatherforecast.databinding.FragmentMainBinding
+import com.example.weatherforecast.contract.MainContract
+import com.example.weatherforecast.databinding.FragmentCurrentForecastBinding
 import com.example.weatherforecast.forecastCreators.DailyForecastListCreator
+import com.example.weatherforecast.view.dailyforecast.DailyForecastFragment
+import com.example.weatherforecast.view.hourslyforecast.HourslyForecastFragment
 import com.google.android.material.tabs.TabLayoutMediator
 import com.squareup.picasso.Picasso
 import org.json.JSONObject
 
-class MainFragment : Fragment() {
+class CurrentForecastFragment : Fragment(), MainContract.View {
 
-    private lateinit var binding: FragmentMainBinding
+    private val presenter = CurrentForecastPresenter(this)
+
+    private lateinit var binding: FragmentCurrentForecastBinding
     private lateinit var permissionLauncher: ActivityResultLauncher<String>
     private val dateTimeConverter = DateTimeConverter()
     private val dailyForecastListCreator = DailyForecastListCreator()
     private val atPresentForecastListCreator = AtPresentForecastListCreator()
-    private val viewModel : MainViewModel by activityViewModels()
+    private val viewModel: MainViewModel by activityViewModels()
 
-    private val listOfFragments = listOf(HoursFragment.newInstance(), DaysFragment.newInstance())
+    private val listOfFragments =
+        listOf(HourslyForecastFragment.newInstance(), DailyForecastFragment.newInstance())
 
     private val tabIcons = listOf(
         R.drawable.ic_baseline_access_time,
@@ -48,17 +59,27 @@ class MainFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        binding = FragmentMainBinding.inflate(inflater, container, false)
+        binding = FragmentCurrentForecastBinding.inflate(inflater, container, false)
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        checkPermission()
-        initTabs()
+
+        startPermissionListener()
+        presenter.startPermissionLauncher()
+        showTabs()
         requestForUpdateWeatherData("Kharkiv")    //change city later to input field
-        showForecastDataAtPresent()
+        //presenter.getCurrentForecast(activity as LifecycleOwner)
+        showCurrentForecast()
     }
+
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        presenter.onDetachView()
+    }
+
 
     private fun requestForUpdateWeatherData(city: String) {
         val url = "https://api.weatherapi.com/v1/forecast.json?key=" +
@@ -85,7 +106,8 @@ class MainFragment : Fragment() {
 
     private fun parseJSONData(result: String) {
         val jsonObjects = JSONObject(result)
-        val dailyWeatherDataList: List<WeatherData> = dailyForecastListCreator.getDailyWeatherDataList(jsonObjects)
+        val dailyWeatherDataList: List<WeatherData> =
+            dailyForecastListCreator.getDailyWeatherDataList(jsonObjects)
 
         val currentDayForecast = dailyWeatherDataList[0]
         val tomorrowDayForecast = dailyWeatherDataList[1]
@@ -95,7 +117,20 @@ class MainFragment : Fragment() {
         viewModel.refreshForecastLiveData(forecastDataAtPresent, tomorrowDayForecast)
     }
 
-    private fun showForecastDataAtPresent() = with(binding) {
+//    override fun showCurrentForecast(weatherData: WeatherData) = with(binding) {
+//        cardMainDate.text = dateTimeConverter.convertDate(weatherData.date)
+//        cardMainCurrentTemperature.text = "${weatherData.currentTemp}°C"
+//        cardMainCity.text = weatherData.city
+//        cardMainDescription.text = weatherData.weatherDescription
+//        cardMainMinTemp.text = "${weatherData.minTemp}°"
+//        cardMainMaxTemp.text = "${weatherData.maxTemp}°"
+//        cardMainFeelingTempValue.text = "${weatherData.feelingTemp}°"
+//        Picasso.get().load("https:" + weatherData.imageURL).into(cardMainWeatherIcon)
+//    }
+
+
+    //override
+    fun showCurrentForecast() = with(binding) {
         viewModel.currentDayForecastLiveData.observe(viewLifecycleOwner) {
             cardMainDate.text = dateTimeConverter.convertDate(it.date)
             cardMainCurrentTemperature.text = "${it.currentTemp}°C"
@@ -108,8 +143,7 @@ class MainFragment : Fragment() {
         }
     }
 
-
-    private fun initTabs() = with(binding) {
+    private fun showTabs() = with(binding) {
         val adapterViewPager = MyViewPagerAdapter(activity as FragmentActivity, listOfFragments)
         viewPager.adapter = adapterViewPager
         TabLayoutMediator(tabs, viewPager) { tab, position ->
@@ -117,24 +151,35 @@ class MainFragment : Fragment() {
         }.attach()
     }
 
-
-    private fun checkPermission() {
-        if (!isPermissionGranted(Manifest.permission.ACCESS_FINE_LOCATION)) {
-            permissionListener()
-            permissionLauncher.launch(Manifest.permission.ACCESS_FINE_LOCATION)
-
-        }
-    }
-
-    private fun permissionListener() {
+    private fun startPermissionListener() {
         permissionLauncher =
             registerForActivityResult(ActivityResultContracts.RequestPermission()) {
-                Toast.makeText(activity, "Permission is $it", Toast.LENGTH_LONG).show()
+                presenter.onPermissionListenerCallback(it)
             }
+    }
+
+    override fun isPermissionGranted(): Boolean {
+        return ContextCompat.checkSelfPermission(
+            activity as AppCompatActivity,
+            Manifest.permission.ACCESS_FINE_LOCATION
+        ) == PackageManager.PERMISSION_GRANTED
+    }
+
+    override fun showPermission() {
+        permissionLauncher.launch(Manifest.permission.ACCESS_FINE_LOCATION)
+    }
+
+    override fun showPermissionGranted() {
+        Toast.makeText(activity, getString(R.string.permission_is_granted), Toast.LENGTH_LONG)
+            .show()
+    }
+
+    override fun showPermissionDenied() {
+        Toast.makeText(activity, getString(R.string.permission_denied), Toast.LENGTH_LONG).show()
     }
 
     companion object {
         @JvmStatic
-        fun newInstance() = MainFragment()
+        fun newInstance() = CurrentForecastFragment()
     }
 }

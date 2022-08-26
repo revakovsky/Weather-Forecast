@@ -1,9 +1,10 @@
-package com.example.weatherforecast
+package com.example.weatherforecast.view
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import com.example.weatherforecast.R
 import com.example.weatherforecast.databinding.ActivityMainBinding
-import com.example.weatherforecast.fragments.MainFragment
+import com.example.weatherforecast.view.currentforecast.CurrentForecastFragment
 
 class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
@@ -15,7 +16,7 @@ class MainActivity : AppCompatActivity() {
 
         supportFragmentManager
             .beginTransaction()
-            .replace(R.id.container_activity_main, MainFragment.newInstance()).commit()
+            .replace(R.id.container_activity_main, CurrentForecastFragment.newInstance()).commit()
     }
 
 }

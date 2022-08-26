@@ -1,4 +1,4 @@
-package com.example.weatherforecast.fragments
+package com.example.weatherforecast.view.hourslyforecast
 
 import android.os.Bundle
 import androidx.fragment.app.Fragment
@@ -10,11 +10,11 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.weatherforecast.MainViewModel
 import com.example.weatherforecast.adapters.WeatherAdapter
 import com.example.weatherforecast.adapters.WeatherData
-import com.example.weatherforecast.databinding.FragmentHoursBinding
+import com.example.weatherforecast.databinding.FragmentHourslyForecastBinding
 import com.example.weatherforecast.forecastCreators.HourlyForecastListCreator
 
-class HoursFragment : Fragment() {
-    private lateinit var binding: FragmentHoursBinding
+class HourslyForecastFragment : Fragment() {
+    private lateinit var binding: FragmentHourslyForecastBinding
     private lateinit var adapter: WeatherAdapter
     private val hourlyForecastListCreator = HourlyForecastListCreator()
     private val viewModel: MainViewModel by activityViewModels()
@@ -23,7 +23,7 @@ class HoursFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        binding = FragmentHoursBinding.inflate(inflater, container, false)
+        binding = FragmentHourslyForecastBinding.inflate(inflater, container, false)
         return binding.root
     }
 
@@ -50,6 +50,6 @@ class HoursFragment : Fragment() {
 
     companion object {
         @JvmStatic
-        fun newInstance() = HoursFragment()
+        fun newInstance() = HourslyForecastFragment()
     }
 }

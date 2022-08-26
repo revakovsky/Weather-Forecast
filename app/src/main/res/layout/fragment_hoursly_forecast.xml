@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".fragments.HoursFragment">
+    tools:context=".view.hourslyforecast.HourslyForecastFragment">
 
     <TextView
         android:id="@+id/text_list_is_empty"
