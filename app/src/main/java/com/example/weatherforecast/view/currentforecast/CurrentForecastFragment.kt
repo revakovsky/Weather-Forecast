@@ -4,9 +4,7 @@ import android.Manifest
 import android.content.pm.PackageManager
 import android.os.Bundle
 import android.util.Log
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
 import android.widget.Toast
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
@@ -15,58 +13,51 @@ import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
 import androidx.fragment.app.activityViewModels
-import androidx.lifecycle.LifecycleOwner
-import androidx.lifecycle.ViewModelProvider
 import com.android.volley.Request
 import com.android.volley.toolbox.StringRequest
 import com.android.volley.toolbox.Volley
 import com.example.weatherforecast.Constants
 import com.example.weatherforecast.MainViewModel
-import com.example.weatherforecast.adapters.DateTimeConverter
+import com.example.weatherforecast.utils.DateTimeConverter
 import com.example.weatherforecast.R
-import com.example.weatherforecast.forecastCreators.AtPresentForecastListCreator
-import com.example.weatherforecast.adapters.MyViewPagerAdapter
-import com.example.weatherforecast.adapters.WeatherData
+import com.example.weatherforecast.forecastCreators.PresentForecastCreator
+import com.example.weatherforecast.utils.adapters.MyViewPagerAdapter
+import com.example.weatherforecast.model.WeatherData
 import com.example.weatherforecast.contract.MainContract
 import com.example.weatherforecast.databinding.FragmentCurrentForecastBinding
-import com.example.weatherforecast.forecastCreators.DailyForecastListCreator
+import com.example.weatherforecast.forecastCreators.DailyForecastCreator
 import com.example.weatherforecast.view.dailyforecast.DailyForecastFragment
-import com.example.weatherforecast.view.hourslyforecast.HourslyForecastFragment
+import com.example.weatherforecast.view.hourslyforecast.HourlyForecastFragment
 import com.google.android.material.tabs.TabLayoutMediator
 import com.squareup.picasso.Picasso
 import org.json.JSONObject
 
-class CurrentForecastFragment : Fragment(), MainContract.View {
+  class CurrentForecastFragment : Fragment(R.layout.fragment_current_forecast), MainContract.View {
 
     private val presenter = CurrentForecastPresenter(this)
 
     private lateinit var binding: FragmentCurrentForecastBinding
+
     private lateinit var permissionLauncher: ActivityResultLauncher<String>
+
     private val dateTimeConverter = DateTimeConverter()
-    private val dailyForecastListCreator = DailyForecastListCreator()
-    private val atPresentForecastListCreator = AtPresentForecastListCreator()
+    private val dailyForecastCreator = DailyForecastCreator()
+    private val presentForecastCreator = PresentForecastCreator()
     private val viewModel: MainViewModel by activityViewModels()
 
     private val listOfFragments =
-        listOf(HourslyForecastFragment.newInstance(), DailyForecastFragment.newInstance())
+        listOf(HourlyForecastFragment.newInstance(), DailyForecastFragment.newInstance())
 
     private val tabIcons = listOf(
         R.drawable.ic_baseline_access_time,
         R.drawable.ic_baseline_today
     )
 
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View {
-        binding = FragmentCurrentForecastBinding.inflate(inflater, container, false)
-        return binding.root
-    }
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        binding = FragmentCurrentForecastBinding.bind(view)
 
-        startPermissionListener()
+        runPermissionLauncher()
         presenter.startPermissionLauncher()
         showTabs()
         requestForUpdateWeatherData("Kharkiv")    //change city later to input field
@@ -107,14 +98,14 @@ class CurrentForecastFragment : Fragment(), MainContract.View {
     private fun parseJSONData(result: String) {
         val jsonObjects = JSONObject(result)
         val dailyWeatherDataList: List<WeatherData> =
-            dailyForecastListCreator.getDailyWeatherDataList(jsonObjects)
+            dailyForecastCreator.getDailyWeatherDataList(jsonObjects)
 
         val currentDayForecast = dailyWeatherDataList[0]
         val tomorrowDayForecast = dailyWeatherDataList[1]
         val forecastDataAtPresent: WeatherData =
-            atPresentForecastListCreator.getForecastDataAtPresent(jsonObjects, currentDayForecast)
+            presentForecastCreator.getForecastDataAtPresent(jsonObjects, currentDayForecast)
 
-        viewModel.refreshForecastLiveData(forecastDataAtPresent, tomorrowDayForecast)
+        viewModel.refreshForecast(forecastDataAtPresent, tomorrowDayForecast)
     }
 
 //    override fun showCurrentForecast(weatherData: WeatherData) = with(binding) {
@@ -131,7 +122,7 @@ class CurrentForecastFragment : Fragment(), MainContract.View {
 
     //override
     fun showCurrentForecast() = with(binding) {
-        viewModel.currentDayForecastLiveData.observe(viewLifecycleOwner) {
+        viewModel.currentDayForecast.observe(viewLifecycleOwner) {
             cardMainDate.text = dateTimeConverter.convertDate(it.date)
             cardMainCurrentTemperature.text = "${it.currentTemp}°C"
             cardMainCity.text = it.city
@@ -151,7 +142,8 @@ class CurrentForecastFragment : Fragment(), MainContract.View {
         }.attach()
     }
 
-    private fun startPermissionListener() {
+      // todo
+    private fun runPermissionLauncher() {
         permissionLauncher =
             registerForActivityResult(ActivityResultContracts.RequestPermission()) {
                 presenter.onPermissionListenerCallback(it)
@@ -178,8 +170,4 @@ class CurrentForecastFragment : Fragment(), MainContract.View {
         Toast.makeText(activity, getString(R.string.permission_denied), Toast.LENGTH_LONG).show()
     }
 
-    companion object {
-        @JvmStatic
-        fun newInstance() = CurrentForecastFragment()
-    }
 }

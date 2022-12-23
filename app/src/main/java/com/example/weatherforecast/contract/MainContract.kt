@@ -1,8 +1,6 @@
 package com.example.weatherforecast.contract
 
-import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.LifecycleOwner
-import com.example.weatherforecast.adapters.WeatherData
 
 interface MainContract {
 

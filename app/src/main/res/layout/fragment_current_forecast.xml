@@ -1,82 +1,67 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@drawable/sky"
+    android:orientation="vertical"
     tools:context=".view.currentforecast.CurrentForecastFragment">
-
-    <ImageView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/wallpaper"
-        android:src="@drawable/sky"
-        android:scaleType="centerCrop"
-        android:alpha="0.8"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent"
-        android:contentDescription="@string/wallpaper_for_the_app"
-        />
 
     <androidx.cardview.widget.CardView
         android:id="@+id/card_main"
-        android:layout_width="@dimen/size_0dp"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="@dimen/size_5dp"
-        app:cardCornerRadius="@dimen/size_5dp"
+        android:backgroundTint="@color/gray"
         android:elevation="@dimen/size_5dp"
-        android:backgroundTint="@color/background_dark"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" >
+        app:cardCornerRadius="@dimen/size_5dp">
 
         <androidx.constraintlayout.widget.ConstraintLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
             android:id="@+id/container_in_main_card"
-            >
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
 
             <TextView
                 android:id="@+id/card_main_date"
                 style="@style/TextViewPrimary.ThinPrimary.Font_20sp"
                 android:layout_marginStart="@dimen/size_24dp"
                 android:layout_marginTop="@dimen/size_16dp"
-                android:text="Wednesday, june 13, 9:00"
                 app:layout_constraintStart_toStartOf="@id/container_in_main_card"
-                app:layout_constraintTop_toTopOf="@id/container_in_main_card" />
+                app:layout_constraintTop_toTopOf="@id/container_in_main_card"
+                tools:text="Wednesday, june 13, 9:00" />
 
             <ImageView
                 android:id="@+id/card_main_weather_icon"
-                android:layout_width="159dp"
-                android:layout_height="173dp"
+                android:layout_width="160dp"
+                android:layout_height="160dp"
                 android:layout_margin="@dimen/size_16dp"
                 android:contentDescription="@string/weather_icon"
                 android:scaleType="fitCenter"
-                android:src="@drawable/weather_icon"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toEndOf="@id/barrier"
-                app:layout_constraintTop_toBottomOf="@+id/card_main_date" />
+                app:layout_constraintTop_toBottomOf="@+id/card_main_date"
+                tools:ignore="ImageContrastCheck"
+                tools:src="@drawable/weather_icon" />
 
             <TextView
                 android:id="@+id/card_main_current_temperature"
                 style="@style/TextViewPrimary"
                 android:layout_marginTop="@dimen/size_8dp"
-                android:text="32°C"
-                android:textColor="@color/secondary_dark"
+                android:textColor="@color/orange"
                 android:textSize="48sp"
                 app:layout_constraintStart_toStartOf="@+id/card_main_date"
-                app:layout_constraintTop_toBottomOf="@+id/card_main_date" />
+                app:layout_constraintTop_toBottomOf="@+id/card_main_date"
+                tools:text="32°C" />
 
             <TextView
                 android:id="@+id/card_main_city"
                 style="@style/TextViewPrimary.Font_28sp"
                 android:layout_marginTop="@dimen/size_8dp"
-                android:text="Kharkiv"
                 app:layout_constraintStart_toStartOf="@+id/card_main_current_temperature"
-                app:layout_constraintTop_toBottomOf="@+id/card_main_current_temperature" />
+                app:layout_constraintTop_toBottomOf="@+id/card_main_current_temperature"
+                tools:text="Kharkiv" />
 
             <TextView
                 android:id="@+id/card_main_description"
@@ -84,65 +69,62 @@
                 android:layout_width="@dimen/size_0dp"
                 android:layout_marginTop="@dimen/size_3dp"
                 android:layout_marginEnd="@dimen/size_8dp"
-                android:text="partly cloudy"
                 app:layout_constraintEnd_toStartOf="@+id/card_main_weather_icon"
                 app:layout_constraintHorizontal_bias="0.0"
                 app:layout_constraintStart_toStartOf="@+id/card_main_city"
                 app:layout_constraintTop_toBottomOf="@+id/card_main_city"
-                app:layout_constraintVertical_bias="0.0" />
+                tools:text="partly cloudy" />
 
             <TextView
                 android:id="@+id/card_main_min_temp"
                 style="@style/TextViewPrimary"
-                android:text="35°"
                 android:layout_marginTop="@dimen/size_24dp"
+                app:layout_constraintStart_toStartOf="@+id/card_main_description"
                 app:layout_constraintTop_toBottomOf="@+id/card_main_description"
-                app:layout_constraintStart_toStartOf="@+id/card_main_description" />
+                tools:text="35°" />
 
             <TextView
                 android:id="@+id/card_main_divider"
                 style="@style/TextViewPrimary.ThinPrimary.Font_20sp"
-                android:text="/"
                 android:layout_marginStart="@dimen/size_3dp"
                 app:layout_constraintBottom_toBottomOf="@+id/card_main_min_temp"
                 app:layout_constraintStart_toEndOf="@+id/card_main_min_temp"
-                app:layout_constraintTop_toTopOf="@+id/card_main_min_temp" />
+                app:layout_constraintTop_toTopOf="@+id/card_main_min_temp"
+                tools:text="/" />
 
             <TextView
                 android:id="@+id/card_main_max_temp"
                 style="@style/TextViewPrimary"
                 android:layout_marginStart="@dimen/size_3dp"
-                android:text="26°"
                 app:layout_constraintBottom_toBottomOf="@+id/card_main_min_temp"
                 app:layout_constraintStart_toEndOf="@+id/card_main_divider"
-                app:layout_constraintTop_toTopOf="@+id/card_main_min_temp" />
+                app:layout_constraintTop_toTopOf="@+id/card_main_min_temp"
+                tools:text="26°" />
 
             <androidx.constraintlayout.widget.Barrier
+                android:id="@+id/barrier"
                 android:layout_width="@dimen/size_0dp"
                 android:layout_height="@dimen/size_0dp"
-                android:id="@+id/barrier"
                 app:barrierDirection="end"
-                app:constraint_referenced_ids="card_main_current_temperature, card_main_city, refresh"
-                />
+                app:constraint_referenced_ids="card_main_current_temperature, card_main_city, refresh" />
 
             <TextView
                 android:id="@+id/card_main_feeling_text"
                 style="@style/TextViewPrimary.ThinPrimary"
-                android:text="feels like"
                 android:layout_marginBottom="@dimen/size_16dp"
+                app:layout_constraintBottom_toBottomOf="@id/container_in_main_card"
                 app:layout_constraintStart_toStartOf="@+id/card_main_city"
                 app:layout_constraintTop_toBottomOf="@+id/card_main_min_temp"
-                app:layout_constraintBottom_toBottomOf="@id/container_in_main_card"
-                />
+                tools:text="feels like" />
 
             <TextView
                 android:id="@+id/card_main_feeling_temp_value"
                 style="@style/TextViewPrimary"
-                android:text="10°"
                 android:layout_marginStart="@dimen/size_3dp"
                 app:layout_constraintBottom_toBottomOf="@+id/card_main_feeling_text"
                 app:layout_constraintStart_toEndOf="@+id/card_main_feeling_text"
-                app:layout_constraintTop_toTopOf="@+id/card_main_feeling_text" />
+                app:layout_constraintTop_toTopOf="@+id/card_main_feeling_text"
+                tools:text="10°" />
 
             <ImageButton
                 android:id="@+id/find_location"
@@ -162,8 +144,7 @@
                 android:src="@drawable/ic_baseline_refresh"
                 app:layout_constraintBottom_toBottomOf="@+id/card_main_feeling_temp_value"
                 app:layout_constraintStart_toEndOf="@+id/card_main_feeling_temp_value"
-                app:layout_constraintTop_toTopOf="@+id/card_main_feeling_temp_value"
-                />
+                app:layout_constraintTop_toTopOf="@+id/card_main_feeling_temp_value" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -171,39 +152,31 @@
 
     <com.google.android.material.tabs.TabLayout
         android:id="@+id/tabs"
-        android:layout_width="@dimen/size_0dp"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/size_5dp"
-        android:backgroundTint="@color/main"
-        app:layout_constraintEnd_toEndOf="@id/card_main"
-        app:layout_constraintStart_toStartOf="@id/card_main"
-        app:layout_constraintTop_toBottomOf="@+id/card_main" >
-
-        <com.google.android.material.tabs.TabItem
-            android:layout_width="@dimen/size_0dp"
-            android:layout_height="wrap_content"
-            android:text="@string/hours"
-            />
+        android:backgroundTint="@color/navy_blue">
 
         <com.google.android.material.tabs.TabItem
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/days"
-            />
+            android:text="@string/hours" />
+
+        <com.google.android.material.tabs.TabItem
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/days" />
 
     </com.google.android.material.tabs.TabLayout>
 
     <androidx.viewpager2.widget.ViewPager2
         android:id="@+id/view_pager"
-        android:layout_width="@dimen/size_0dp"
-        android:layout_height="@dimen/size_0dp"
-        android:layout_marginBottom="@dimen/size_5dp"
-        app:layout_constraintStart_toStartOf="@id/card_main"
-        app:layout_constraintEnd_toEndOf="@id/card_main"
-        app:layout_constraintTop_toBottomOf="@id/tabs"
-        app:layout_constraintBottom_toBottomOf="parent"
-        >
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginStart="@dimen/size_5dp"
+        android:layout_marginEnd="@dimen/size_5dp"
+        android:layout_marginBottom="@dimen/size_5dp">
 
     </androidx.viewpager2.widget.ViewPager2>
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+</LinearLayout>
