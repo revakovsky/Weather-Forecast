@@ -3,7 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".view.hourslyforecast.HourlyForecastFragment">
+    tools:context=".view.HourlyForecastFragment">
 
     <TextView
         android:id="@+id/text_list_is_empty"
@@ -14,7 +14,7 @@
         android:visibility="gone" />
 
     <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/rec_view_hours_cards"
+        android:id="@+id/rec_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 

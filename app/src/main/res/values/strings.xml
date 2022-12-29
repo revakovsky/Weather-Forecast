@@ -14,4 +14,10 @@
     <string name="allow_the_app_to_use_geolocation">Please, allow the app access to the geolocation</string>
     <string name="permission_is_granted">Permission is granted</string>
     <string name="permission_denied">Permission denied</string>
+    <string name="slash">/</string>
+    <string name="feels_like">feels like </string>
+    <string name="percents">%</string>
+    <string name="something_went_wrong">Something went wrong..</string>
+    <string name="something_wrong_with_server">Something wrong with server..</string>
+
 </resources>

@@ -1,7 +1,7 @@
-package com.example.weatherforecast.model
+package com.example.weatherforecast.model.models
 
 data class WeatherData(
-    val city: String,
+    val city: String? = "",
     val date: String,
     val weatherDescription: String,
     val imageURL: String,
@@ -10,5 +10,5 @@ data class WeatherData(
     val maxTemp: String,
     val feelingTemp: String,
     val chanceOfRain: String,
-    val hourlyForecast: String
+    val hourlyForecast: List<Hour>? = null
 )

@@ -30,9 +30,9 @@
             android:layout_width="@dimen/size_0dp"
             android:layout_marginStart="@dimen/size_16dp"
             android:layout_marginEnd="@dimen/size_16dp"
+            android:textColor="@color/black"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@+id/temp_value"
-            app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toEndOf="@+id/date_info"
             app:layout_constraintTop_toTopOf="parent"
             tools:text="Sunny" />
@@ -45,7 +45,7 @@
             android:layout_marginBottom="@dimen/size_5dp"
             android:textSize="@dimen/text_size_13sp"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toEndOf="@+id/drop_image"
+            app:layout_constraintStart_toStartOf="@+id/temp_value"
             app:layout_constraintTop_toBottomOf="@+id/temp_value"
             tools:text="25" />
 
@@ -53,21 +53,22 @@
             android:id="@+id/chance_of_rain_percentages"
             style="@style/TextViewPrimary.ThinPrimary.Color_black"
             android:layout_marginStart="1dp"
+            android:text="@string/percents"
             android:textSize="@dimen/text_size_13sp"
             app:layout_constraintBottom_toBottomOf="@+id/chance_of_rain_value"
             app:layout_constraintStart_toEndOf="@+id/chance_of_rain_value"
-            app:layout_constraintTop_toTopOf="@+id/chance_of_rain_value"
-            tools:text="%" />
+            app:layout_constraintTop_toTopOf="@+id/chance_of_rain_value" />
 
         <ImageView
             android:id="@+id/drop_image"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:alpha="0.4"
             android:contentDescription="@string/drop_icon"
             android:src="@drawable/water_drop_icon"
             app:layout_constraintBottom_toBottomOf="@+id/chance_of_rain_value"
+            app:layout_constraintEnd_toStartOf="@+id/temp_value"
             app:layout_constraintHeight="@dimen/size_13dp"
-            app:layout_constraintStart_toStartOf="@+id/temp_value"
             app:layout_constraintTop_toTopOf="@+id/chance_of_rain_value"
             app:layout_constraintWidth="@dimen/size_13dp" />
 
@@ -93,8 +94,7 @@
             android:textColor="@color/black"
             app:layout_constraintEnd_toStartOf="@+id/temp_image"
             app:layout_constraintTop_toTopOf="parent"
-            tools:text="23°C" />
-
+            tools:text="23°" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

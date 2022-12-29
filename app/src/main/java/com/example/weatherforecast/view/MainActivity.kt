@@ -4,7 +4,6 @@ import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import com.example.weatherforecast.R
 import com.example.weatherforecast.databinding.ActivityMainBinding
-import com.example.weatherforecast.view.currentforecast.CurrentForecastFragment
 
 class MainActivity : AppCompatActivity() {
 

@@ -1,5 +1,6 @@
 package com.example.weatherforecast.utils.adapters
 
+import android.content.res.Resources
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -8,15 +9,15 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.example.weatherforecast.R
 import com.example.weatherforecast.databinding.WeatherForecastItemBinding
-import com.example.weatherforecast.model.WeatherData
+import com.example.weatherforecast.model.models.WeatherData
 import com.squareup.picasso.Picasso
 
 class WeatherAdapter : ListAdapter<WeatherData, WeatherAdapter.WeatherViewHolder>(Comparator()) {
 
-    class WeatherViewHolder(view : View) : RecyclerView.ViewHolder(view) {
+    class WeatherViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         private val binding = WeatherForecastItemBinding.bind(view)
 
-        fun bind (item : WeatherData) = with(binding) {
+        fun bind(item: WeatherData) = with(binding) {
             dateInfo.text = item.date
             weatherDescription.text = item.weatherDescription
             tempValue.text = "${item.currentTemp}°"
@@ -26,7 +27,8 @@ class WeatherAdapter : ListAdapter<WeatherData, WeatherAdapter.WeatherViewHolder
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): WeatherViewHolder {
-        val view = LayoutInflater.from(parent.context).inflate(R.layout.weather_forecast_item, parent, false)
+        val view = LayoutInflater.from(parent.context)
+            .inflate(R.layout.weather_forecast_item, parent, false)
         return WeatherViewHolder(view)
     }
 
