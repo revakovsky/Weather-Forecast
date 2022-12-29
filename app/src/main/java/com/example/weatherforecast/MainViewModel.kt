@@ -5,10 +5,12 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.example.weatherforecast.model.forecastCreators.DailyForecastCreator
+import com.example.weatherforecast.model.forecastCreators.HourlyForecastCreator
 import com.example.weatherforecast.model.forecastCreators.PresentForecastCreator
 import com.example.weatherforecast.model.models.Response
 import com.example.weatherforecast.model.models.WeatherData
 import com.example.weatherforecast.network.ApiClient
+import com.example.weatherforecast.utils.Constants
 import retrofit2.Call
 import retrofit2.Callback
 
@@ -16,12 +18,16 @@ class MainViewModel : ViewModel() {
 
     private val dailyForecastCreator = DailyForecastCreator()
     private val presentForecastCreator = PresentForecastCreator()
+    private val hourlyForecastCreator = HourlyForecastCreator()
 
-    private val _currentDayForecast = MutableLiveData<WeatherData>()
-    val currentDayForecast: LiveData<WeatherData> = _currentDayForecast
+    private val _forecastAtPresent = MutableLiveData<WeatherData>()
+    val forecastAtPresent: LiveData<WeatherData> = _forecastAtPresent
 
     private val _hourlyForecast = MutableLiveData<List<WeatherData>>()
     val hourlyForecast: LiveData<List<WeatherData>> = _hourlyForecast
+
+    private val _dailyForecast = MutableLiveData<List<WeatherData>>()
+    val dailyForecast: LiveData<List<WeatherData>> = _dailyForecast
 
     private var _toastCode = MutableLiveData<Int>()
     val toastCode: LiveData<Int> = _toastCode
@@ -36,16 +42,24 @@ class MainViewModel : ViewModel() {
                 if (response.isSuccessful) {
                     val data: Response = response.body()!!
 
-                    val dailyForecastData: List<WeatherData> =
+                    val dailyForecast: List<WeatherData> =
                         dailyForecastCreator.getDailyData(data)
-                    val currentDayForecast = dailyForecastData[0]
-                    val tomorrowDayForecast = dailyForecastData[1]
+
+                    val currentDayForecast = dailyForecast[0]
+                    val tomorrowDayForecast = dailyForecast[1]
 
                     val forecastAtPresent: WeatherData =
-                        presentForecastCreator.getForecastAtPresent(data, currentDayForecast)
+                        presentForecastCreator.getForecastAtPresent(data)
 
-                    _currentDayForecast.value = forecastAtPresent
-                    _hourlyForecast.value = listOf(forecastAtPresent, tomorrowDayForecast)
+                    val hourlyForecast: List<WeatherData> =
+                        hourlyForecastCreator.getHourlyForecast(
+                            currentDayForecast,
+                            tomorrowDayForecast
+                        )
+
+                    _forecastAtPresent.value = forecastAtPresent
+                    _hourlyForecast.value = hourlyForecast
+                    _dailyForecast.value = dailyForecast
 
                 } else {
                     _toastCode.value = AppCompatActivity.RESULT_OK

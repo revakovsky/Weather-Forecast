@@ -1,6 +1,5 @@
 package com.example.weatherforecast.utils.adapters
 
-import android.content.res.Resources
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -18,9 +17,14 @@ class WeatherAdapter : ListAdapter<WeatherData, WeatherAdapter.WeatherViewHolder
         private val binding = WeatherForecastItemBinding.bind(view)
 
         fun bind(item: WeatherData) = with(binding) {
+            val textHours = "${item.currentTemp}°"
+            val textDays = "${item.minTemp}° / ${item.maxTemp}°"
+
             dateInfo.text = item.date
             weatherDescription.text = item.weatherDescription
-            tempValue.text = "${item.currentTemp}°"
+            tempValue.text =
+                if (item.currentTemp.isEmpty()) textDays
+                else textHours
             chanceOfRainValue.text = item.chanceOfRain
             Picasso.get().load("https:" + item.imageURL).into(tempImage)
         }

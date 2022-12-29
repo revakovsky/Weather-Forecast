@@ -3,6 +3,7 @@ package com.example.weatherforecast.model.forecastCreators
 import com.example.weatherforecast.model.models.Hour
 import com.example.weatherforecast.model.models.WeatherData
 import com.example.weatherforecast.utils.DateTimeConverter
+import kotlin.math.roundToInt
 
 class HourlyForecastCreator {
 
@@ -10,12 +11,12 @@ class HourlyForecastCreator {
     private val hourlyForecast = ArrayList<WeatherData>()
 
     fun getHourlyForecast(
-        forecastForToday: WeatherData,
-        forecastForTomorrow: WeatherData
+        currentDayForecast: WeatherData,
+        tomorrowDayForecast: WeatherData
     ): List<WeatherData> {
 
-        val hourlyDataForToday = forecastForToday.hourlyForecast
-        val hourlyDataForTomorrow = forecastForTomorrow.hourlyForecast
+        val hourlyDataForToday = currentDayForecast.hourlyForecast
+        val hourlyDataForTomorrow = tomorrowDayForecast.hourlyForecast
 
         val currentTime = timeConverter.getCurrentTime() + 1
 
@@ -38,7 +39,7 @@ class HourlyForecastCreator {
                 date = timeConverter.convertTime(oneHourData.time),
                 weatherDescription = oneHourData.condition.text,
                 imageURL = oneHourData.condition.icon,
-                currentTemp = convertTemperature(oneHourData.temp_c.toString()),
+                currentTemp = oneHourData.temp_c.roundToInt().toString(),
                 minTemp = "",
                 maxTemp = "",
                 feelingTemp = "",
@@ -46,9 +47,5 @@ class HourlyForecastCreator {
                 hourlyForecast = null
             )
         )
-    }
-
-    private fun convertTemperature(temp: String): String {
-        return String.format("%d", temp.toDouble().toInt())
     }
 }

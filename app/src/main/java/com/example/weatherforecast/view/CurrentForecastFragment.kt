@@ -81,14 +81,19 @@ class CurrentForecastFragment : Fragment(R.layout.fragment_current_forecast) {
     }
 
     private fun showCurrentForecast() = with(binding) {
-        viewModel.currentDayForecast.observe(viewLifecycleOwner) { forecast ->
-            cardMainDate.text = dateTimeConverter.convertDate(forecast.date)
-            cardMainCurrentTemperature.text = "${forecast.currentTemp}°C"
+        viewModel.forecastAtPresent.observe(viewLifecycleOwner) { forecast ->
+            val currentTempValue = "${forecast.currentTemp}°C"
+            val minTempValue = "${forecast.minTemp}°"
+            val maxTempValue = "${forecast.maxTemp}°"
+            val feelingTempValue = "${forecast.feelingTemp}°"
+
+            cardMainDate.text = dateTimeConverter.convertDate(forecast.date, 1)
+            cardMainCurrentTemperature.text = currentTempValue
             cardMainCity.text = forecast.city
             cardMainDescription.text = forecast.weatherDescription
-            cardMainMinTemp.text = "${forecast.minTemp}°"
-            cardMainMaxTemp.text = "${forecast.maxTemp}°"
-            cardMainFeelingTempValue.text = "${forecast.feelingTemp}°"
+            cardMainMinTemp.text = minTempValue
+            cardMainMaxTemp.text = maxTempValue
+            cardMainFeelingTempValue.text = feelingTempValue
             Picasso.get().load("https:" + forecast.imageURL).into(cardMainWeatherIcon)
         }
     }

@@ -9,6 +9,6 @@ data class WeatherData(
     val minTemp: String,
     val maxTemp: String,
     val feelingTemp: String,
-    val chanceOfRain: String,
+    val chanceOfRain: String? = "",
     val hourlyForecast: List<Hour>? = null
 )

@@ -13,7 +13,7 @@ interface ApiClient {
     fun getForecast(
         @Query("key") key: String,
         @Query("q") city: String,
-        @Query("days") days: Int = 5,
+        @Query("days") days: Int = 10,
         @Query("aqi") aqi: String = "no",
         @Query("alerts") alerts: String = "no",
     ): Call<Response>

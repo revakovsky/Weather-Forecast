@@ -2,7 +2,9 @@ package com.example.weatherforecast.utils
 
 import android.annotation.SuppressLint
 import android.os.Build
+import android.text.format.DateFormat
 import java.text.SimpleDateFormat
+import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.LocalTime
 import java.time.format.DateTimeFormatter
@@ -10,8 +12,14 @@ import java.util.*
 
 class DateTimeConverter {
 
-    fun convertDate(date: String): String {
-        return parseDate(date)
+    fun convertDate(date: String, index: Int): String {
+        val format1 = "yyyy-MM-dd HH:mm"
+        val format2 = "yyyy-MM-dd"
+
+        return when(index) {
+            1 -> parseDate(date, format1)
+            else -> parseDate(date, format2)
+        }
     }
 
     @SuppressLint("NewApi")
@@ -26,30 +34,47 @@ class DateTimeConverter {
 
     @Suppress("DEPRECATION")
     @SuppressLint("SimpleDateFormat")
-    private fun parseDate(dateTime: String): String {
-        val format = "yyyy-MM-dd HH:mm"
+    private fun parseDate(dateTime: String, format: String): String {
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            val formatter = DateTimeFormatter.ofPattern(format)
-            val convertedDate = LocalDateTime.parse(dateTime, formatter)
+            if (format == "yyyy-MM-dd HH:mm") {
+                val formatter = DateTimeFormatter.ofPattern(format)
+                val convertedDate = LocalDateTime.parse(dateTime, formatter)
 
-            val month = changeDateSpelling(convertedDate.month.toString())
-            val day = convertedDate.dayOfMonth
-            val dayName = changeDateSpelling(convertedDate.dayOfWeek.toString())
+                val month = changeDateSpelling(convertedDate.month.toString())
+                val day = convertedDate.dayOfMonth
+                val dayName = changeDateSpelling(convertedDate.dayOfWeek.toString())
 
-            return "$dayName, $day of $month"
+                return "$dayName, $day of $month"
+            } else {
+                val formatter = DateTimeFormatter.ofPattern(format)
+                val convertedDate = LocalDate.parse(dateTime, formatter)
+
+                val month = changeDateSpellingShort(convertedDate.month.toString())
+                val day = convertedDate.dayOfMonth
+
+                return "$day $month"
+            }
 
         } else {
-            //todo
-            val formatter = SimpleDateFormat(format)
-            val date = formatter.parse(dateTime)
+            if (format == "yyyy-MM-dd HH:mm") {
+                val simpleFormat = SimpleDateFormat(format)
+                val date = simpleFormat.parse(dateTime)
 
-            val month = Calendar.getInstance().get(Calendar.MONTH)
-            val day = Calendar.getInstance().get(Calendar.DAY_OF_MONTH)
-            val dayOfWeek = Calendar.getInstance().get(Calendar.DAY_OF_WEEK)
-            val dayName = changeDateSpelling(dayOfWeek.toString())
+                val month = DateFormat.format("MMMM", date) as String
+                val day = Calendar.getInstance().get(Calendar.DAY_OF_MONTH)
+                val dayName = changeDateSpelling(DateFormat.format("EEEE", date) as String)
 
-            return "$dayName, $day of $month"
+                return "$dayName, $day of $month"
+            } else {
+                val simpleFormat = SimpleDateFormat(format)
+                val date = simpleFormat.parse(dateTime)
+
+                val month = DateFormat.format("MMM", date) as String
+                val day = DateFormat.format("dd",   date) as String
+
+                return "$day $month"
+            }
         }
     }
 
@@ -83,5 +108,9 @@ class DateTimeConverter {
 
     private fun changeDateSpelling(dateItem: String): String {
         return dateItem.lowercase().replaceFirstChar { it.uppercase() }
+    }
+
+    private fun changeDateSpellingShort(dateItem: String): String {
+        return dateItem.lowercase().replaceFirstChar { it.uppercase() }.take(3)
     }
 }
