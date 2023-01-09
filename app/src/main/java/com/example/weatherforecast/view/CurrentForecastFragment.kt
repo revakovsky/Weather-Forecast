@@ -1,11 +1,16 @@
 package com.example.weatherforecast.view
 
 import android.Manifest
+import android.content.Context
+import android.content.Intent
+import android.content.pm.PackageManager
+import android.location.LocationManager
 import android.os.Bundle
 import android.view.View
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.app.ActivityCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
 import androidx.fragment.app.activityViewModels
@@ -15,7 +20,12 @@ import com.example.weatherforecast.databinding.FragmentCurrentForecastBinding
 import com.example.weatherforecast.utils.DateTimeConverter
 import com.example.weatherforecast.utils.adapters.MyViewPagerAdapter
 import com.example.weatherforecast.utils.isPermissionProhibited
+import com.example.weatherforecast.utils.showLocationDialog
 import com.example.weatherforecast.utils.showToast
+import com.google.android.gms.location.FusedLocationProviderClient
+import com.google.android.gms.location.LocationServices
+import com.google.android.gms.location.Priority
+import com.google.android.gms.tasks.CancellationTokenSource
 import com.google.android.material.tabs.TabLayoutMediator
 import com.squareup.picasso.Picasso
 
@@ -24,20 +34,20 @@ class CurrentForecastFragment : Fragment(R.layout.fragment_current_forecast) {
     private lateinit var binding: FragmentCurrentForecastBinding
 
     private lateinit var permissionLauncher: ActivityResultLauncher<String>
+    private lateinit var locationClient: FusedLocationProviderClient
     private val viewModel: MainViewModel by activityViewModels()
 
     private val dateTimeConverter = DateTimeConverter()
 
     private val listOfFragments = listOf(
-        HourlyForecastFragment::class.java.newInstance(),
-        DailyForecastFragment::class.java.newInstance()
+        HourlyForecastFragment(),
+        DailyForecastFragment()
     )
 
     private val tabIcons = listOf(
-        R.drawable.ic_baseline_access_time, R.drawable.ic_baseline_today
+        R.drawable.ic_baseline_access_time,
+        R.drawable.ic_baseline_today
     )
-
-    private val city = "Kharkiv"
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -45,11 +55,40 @@ class CurrentForecastFragment : Fragment(R.layout.fragment_current_forecast) {
 
         checkPermissions()
         showTabs()
+        initViews()
 
-        viewModel.makeRequest(city)
+        // todo create normal launch process
 
-        initToastObserver()
+        checkResponseForError()
         showCurrentForecast()
+    }
+
+    private fun initViews() {
+        binding.refresh.setOnClickListener {
+            binding.apply { tabs.selectTab(tabs.getTabAt(0)) }
+            checkLocation()
+        }
+    }
+
+    private fun getLocation() {
+        locationClient = LocationServices.getFusedLocationProviderClient(requireContext())
+        val cancellationToken = CancellationTokenSource()
+        if (ActivityCompat.checkSelfPermission(
+                requireContext(),
+                Manifest.permission.ACCESS_FINE_LOCATION
+            ) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(
+                requireContext(),
+                Manifest.permission.ACCESS_COARSE_LOCATION
+            ) != PackageManager.PERMISSION_GRANTED
+        ) {
+            return
+        }
+        locationClient.getCurrentLocation(
+            Priority.PRIORITY_HIGH_ACCURACY,
+            cancellationToken.token
+        ).addOnCompleteListener {
+            viewModel.makeRequest("${it.result.latitude},${it.result.longitude}")
+        }
     }
 
     private fun checkPermissions() {
@@ -63,6 +102,21 @@ class CurrentForecastFragment : Fragment(R.layout.fragment_current_forecast) {
         }
     }
 
+    private fun isLocationEnabled(): Boolean {
+        val locationServices =
+            activity?.getSystemService(Context.LOCATION_SERVICE) as LocationManager
+        return locationServices.isProviderEnabled(LocationManager.GPS_PROVIDER)
+    }
+
+    private fun checkLocation() {
+        if (isLocationEnabled()) getLocation()
+        else {
+            showLocationDialog {
+                startActivity(Intent(android.provider.Settings.ACTION_LOCATION_SOURCE_SETTINGS))
+            }
+        }
+    }
+
     private fun showTabs() = with(binding) {
         val adapterViewPager = MyViewPagerAdapter(activity as FragmentActivity, listOfFragments)
         viewPager.adapter = adapterViewPager
@@ -71,7 +125,7 @@ class CurrentForecastFragment : Fragment(R.layout.fragment_current_forecast) {
         }.attach()
     }
 
-    private fun initToastObserver() {
+    private fun checkResponseForError() {
         viewModel.toastCode.observe(viewLifecycleOwner) { code ->
             when (code) {
                 AppCompatActivity.RESULT_OK -> showToast(getString(R.string.something_went_wrong))
@@ -96,5 +150,10 @@ class CurrentForecastFragment : Fragment(R.layout.fragment_current_forecast) {
             cardMainFeelingTempValue.text = feelingTempValue
             Picasso.get().load("https:" + forecast.imageURL).into(cardMainWeatherIcon)
         }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        checkLocation()
     }
 }

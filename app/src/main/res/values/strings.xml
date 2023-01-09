@@ -19,5 +19,9 @@
     <string name="percents">%</string>
     <string name="something_went_wrong">Something went wrong..</string>
     <string name="something_wrong_with_server">Something wrong with server..</string>
+    <string name="enable_location">Enable location?</string>
+    <string name="enable_location_description">The location service is disabled on your phone. \nDo you want to turn it on?</string>
+    <string name="yes">Yes</string>
+    <string name="no">No</string>
 
 </resources>
